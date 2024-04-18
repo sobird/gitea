@@ -1,4 +1,6 @@
 gitea_data
 gitea_postgres_data
-act_runner
+act_runner/cache
+act_runner/data
+workspace
 .DS_Store
