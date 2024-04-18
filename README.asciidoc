@@ -8,7 +8,7 @@
 ## 安装
 
 ### Docker方式安装
-通过`docker compose`安装，新建`docker-compose.yml`文件：
+通过 `docker compose` 安装，新建 `docker-compose.yml` 文件：
 
 ```yml
 version: "3"
@@ -75,7 +75,7 @@ networks:
   gitea_net:
 ```
 
-在 `docker-compose.yml` 所在的目录运行 `docker-compose up`
+在 `docker-compose.yml` 所在的目录运行 `docker-compose up -d`，启动应用。
 
 ### 其他方式安装
 
@@ -89,7 +89,7 @@ networks:
 
 ### gitea开启actions
 
-修改gitea/conf/app.ini配置，若使用docker部署，可通过docker exec -it ${容器id} /bin/bash进入内部修改，修改完后重启 gitea 容器。如果配置了
+修改 `gitea/conf/app.ini` 配置，若使用docker部署，可通过 `docker exec -it ${容器id} /bin/bash` 进入内部修改，修改完后重启 gitea 容器。如果配置了
 
 ```yml
     volumes:
@@ -113,12 +113,12 @@ ENABLED = true
 参阅上面的 `docker-compose.yml` 配置文件中 `act_runner` 部分。
 
 ### 查看
-返回 link:http://localhost:3000/admin/actions/runners[Runners] 管理面板即可看到加入的runner，且状态为 空闲
+返回 link:http://localhost:3000/admin/actions/runners[Runners]，即可看到加入的runner，且状态为 空闲。
 
 ## 测试
 
 ### 创建测试仓库
-创建名为 `actions-test` 的仓库，在设置中开启 Actions ，即可看到多了 Actions 一栏。
+创建名为 `actions-test` 的仓库，在设置中开启 Actions。
 
 为方便操作可将仓库克隆到本地
 ```sh
@@ -127,7 +127,7 @@ git clone http://localhost:3000/sobird/actions-test.git
 
 ### 添加工作流文件
 
-以下是一个示例，将它保存到 `.gitea/workflows/build.yaml` 时会触发 CI 工作，yaml 语法可参考 link:https://docs.github.com/zh/actions/using-workflows/workflow-syntax-for-github-actions[Github Actions Docs]
+以下是一个示例，将 `.gitea/workflows/build.yaml` push 到仓库时会触发 CI 工作，yaml 语法可参考 link:https://docs.github.com/zh/actions/using-workflows/workflow-syntax-for-github-actions[Github Actions Docs]
 
 ```yml
 name: Gitea Actions Test
@@ -150,25 +150,19 @@ jobs:
       - run: echo "  This job's status is ${{ job.status }}."
 ```
 
-提交 `.gitea/workflows/build.yaml` 到远程仓库
-
-```sh
-git add .
-git commit -m"chore: test actions"
-git push origin
-```
-
 ### 查看运行结果
 
 当代码提交到远程仓库，即会触发上面配置的工作流，访问 link:http://localhost:3000/sobird/actions-test/actions[actions] 进行查看。
 
 ## 配置 config.yaml
 
-通过 `docker run --entrypoint="" --rm -it gitea/act_runner:latest act_runner generate-config > config.yaml` 生成，并将生成的配置文件拷贝到本地 `./act_runner`。
+可通过 `docker run --entrypoint="" --rm -it gitea/act_runner:latest act_runner generate-config > config.yaml` 生成，并将生成的配置文件拷贝到本地 `./act_runner`。
 
 ```sh
 docker cp 3d17a8d385b3:/config.yaml ./act_runner
 ```
+
+或者直接复制下面的 config.yaml 到本地 ./act_runner 目录
 
 整个 `config.yaml` 配置文件如下：
 
@@ -305,7 +299,7 @@ host:
 ```
 
 输出
-```sh
+```
 refs/heads/main
 seepine/actions-test
 ```
@@ -331,7 +325,7 @@ jobs:
 
 输出
 
-```sh
+```
 sobird/actions-test
 custom env value
 asdf1234
@@ -346,7 +340,7 @@ asdf1234
 
 输出
 
-```sh
+```
 ***
 ```
 
@@ -367,13 +361,13 @@ jobs:
 
 输出
 
-```sh
+```
 asdf1234
 ```
 
 ## 进阶用法
 ### 指定工作流运行 runner
-若有多个runner节点，我们想指定某个工作流程运行在特定runner上，可在不同runner指定不同label用于区分（可在Runner管理面板，编辑其 labels），例如分别有两个 runner 是 linux 环境和 windows 环境，因此分别设置label为 `linux_runner`和 `windows_runner`。
+若有多个runner节点，我们想指定某个工作流程运行在特定runner上，可在不同runner指定不同label用于区分（可在Runner管理面板，编辑其 labels），例如分别有两个 runner 是 linux 环境和 windows 环境，因此分别设置label为 `linux_runner` 和 `windows_runner`。
 
 ```yml
 jobs:
@@ -405,7 +399,7 @@ jobs:
   uses: https://github.com/my_custom/other-action@v2
 ```
 
-也可以通过修改gitea的`app.ini`配置，改为从相应的仓库下载
+也可以通过修改gitea的 `app.ini` 配置，改为从相应的仓库下载
 
 ```yml
 [actions]
@@ -483,7 +477,7 @@ runner:
   capacity: 3
 ```
 
-### 6. 使用 actions/cache 超时
+### 使用 actions/cache 超时
 
 如果是通过docker部署的 act_runner ，因为容器隔离特性，其他运行的任务容器，无法访问到 act_runner 的cache相关服务，所以需要暴露出对应端口。
 
@@ -493,3 +487,4 @@ runner:
 
 * link:https://seepine.com/git/gitea/starter/[Gitea - 搭建属于自己的代码仓库]
 * link:https://seepine.com/git/gitea/actions/[Gitea Actions 搭建]
+* link:https://blog.7wate.com/archives/qian-chang-gitea-de-actions[浅尝 Gitea 的 Actions]
