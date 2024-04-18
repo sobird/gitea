@@ -1,7 +1,7 @@
 version: "3"
 services:
-  server:
-    image: gitea/gitea:1.20.0
+  gitea:
+    image: gitea/gitea:1.21.0
     container_name: gitea
     environment:
       - USER_UID=1000
@@ -11,6 +11,8 @@ services:
       - GITEA__database__NAME=gitea
       - GITEA__database__USER=gitea
       - GITEA__database__PASSWD=gitea
+    networks:
+      - gitea_net
     volumes:
       - ./gitea_data:/data
     ports:
@@ -25,9 +27,35 @@ services:
       - POSTGRES_USER=gitea
       - POSTGRES_PASSWORD=gitea
       - POSTGRES_DB=gitea
+    networks:
+      - gitea_net
     volumes:
       - ./gitea_postgres_data:/var/lib/postgresql/data
 
-volumes:
-  gitea_data:
-  gitea_postgres_data:
+  act_runner:
+    image: gitea/act_runner:latest
+    container_name: act_runner
+    restart: always
+    depends_on:
+      - gitea
+    networks:
+      - gitea_net
+    environment:
+      # - CONFIG_FILE=/config.yaml
+      - GITEA_INSTANCE_URL=http://gitea:3000/
+      - GITEA_RUNNER_REGISTRATION_TOKEN=tOCwFvUOIFYzQCnc7MVt3z0OwEewLAhTUyZ4TUTv
+      - GITEA_RUNNER_NAME=act_runner
+      # runs-on 的标签实际上是下面这个，上面的只是名字
+      # GITEA_RUNNER_LABELS: "ubuntu-latest"
+    volumes:
+      # - ./act_runner/config.yaml:/config.yaml
+      - ./act_runner/data:/data
+      - ./act_runner/cache:/root/.cache
+      - /var/run/docker.sock:/var/run/docker.sock
+
+# volumes:
+#   gitea_data:
+#   gitea_postgres_data:
+
+networks:
+  gitea_net:
