@@ -45,7 +45,7 @@ services:
     volumes:
       - ./gitea_postgres_data:/var/lib/postgresql/data
   
-  # Action runner 相关配置
+  # 以容器的方式运行 act_runner 相关配置
   act_runner:
     image: gitea/act_runner:latest
     container_name: act_runner
@@ -57,13 +57,17 @@ services:
     environment:
       # - CONFIG_FILE=/config.yaml
       - GITEA_INSTANCE_URL=http://gitea:3000/
-      - GITEA_RUNNER_REGISTRATION_TOKEN=<token> # 复制的token
+      - GITEA_RUNNER_REGISTRATION_TOKEN=<token>
+      # - GITEA_RUNNER_REGISTRATION_TOKEN_FILE=path/to/token # 也支持从文件中读取token
       - GITEA_RUNNER_NAME=act_runner
       # runs-on 的标签实际上是下面这个，上面的只是名字
       # GITEA_RUNNER_LABELS: "ubuntu-latest"
+      # GITEA_MAX_REG_ATTEMPTS
+      # RUNNER_STATE_FILE
     volumes:
       # - ./act_runner/config.yaml:/config.yaml
-      - ./act_runner/data:/data
+      - ./act_runner/data:/
+      # 将容器中的缓存目录映射到宿主机
       - ./act_runner/cache:/root/.cache
       - /var/run/docker.sock:/var/run/docker.sock
 
@@ -110,7 +114,26 @@ ENABLED = true
 
 ### 配置act runner
 
+#### 以容器方式运行
+
 参阅上面的 `docker-compose.yml` 配置文件中 `act_runner` 部分。
+
+#### 运行在物理机上
+
+```sh
+git clone https://gitea.com/gitea/act_runner.git
+
+export GOPROXY=https://goproxy.cn
+
+cd act_runner
+make build
+
+# 可根据帮助 自行配置
+./act_runner -h
+
+# 注册 runner 根据提示进行配置
+./act_runner register
+```
 
 ### 查看
 返回 link:http://localhost:3000/admin/actions/runners[Runners]，即可看到加入的runner，且状态为 空闲。
@@ -456,16 +479,16 @@ jobs:
       # 方法一，指定容器将工具缓存路径存放到 /toolcache ，该目录actRunner会默认持久化它
       RUNNER_TOOL_CACHE: /toolcache
     steps:
-      - name: Setup Java
-        uses: actions/setup-java@v3
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          distribution: 'zulu'
-          java-version: '17'
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
 
-      - run: java -version
+      - run: node -v
 ```
 
-目前，gitea 已经解决此问题，无需特殊配置。
+目前，gitea 已经解决此问题，默认会缓存到宿主机 `/var/lib/docker/volumes/act-toolcache/_data`。
 
 ### 支持多任务运行
 
