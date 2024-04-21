@@ -2,5 +2,7 @@ gitea_data
 gitea_postgres_data
 act_runner/cache
 act_runner/data
+act_runner_data/cache
+act_runner_data/data
 workspace
 .DS_Store

@@ -1,0 +1,28 @@
+version: "3"
+services:
+  # 独立容器部署
+  act_runner:
+    image: gitea/act_runner:latest
+    container_name: act_runner
+    restart: always
+    networks:
+      - host
+    environment:
+      - CONFIG_FILE=/config.yaml
+      - GITEA_INSTANCE_URL=http://192.168.50.100:3000/
+      - GITEA_RUNNER_REGISTRATION_TOKEN=tOCwFvUOIFYzQCnc7MVt3z0OwEewLAhTUyZ4TUTv
+      - GITEA_RUNNER_NAME=act_runner_windows
+      # runs-on 的标签实际上是下面这个，上面的只是名字
+      # GITEA_RUNNER_LABELS: "ubuntu-latest"
+    volumes:
+      - ./config.yaml:/config.yaml
+      - ./data:/data
+      - ./cache:/root/.cache
+      - /var/run/docker.sock:/var/run/docker.sock
+
+# volumes:
+#   gitea_data:
+#   gitea_postgres_data:
+
+networks:
+  gitea_net:
