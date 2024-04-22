@@ -15,6 +15,7 @@ services:
       - gitea_net
     volumes:
       - ./gitea_data:/data
+      - ./gitea_conf:/data/gitea/conf
     ports:
       - "3000:3000"
       - "10022:22"
