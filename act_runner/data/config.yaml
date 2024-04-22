@@ -35,7 +35,7 @@ runner:
   # If it's empty when registering, it will ask for inputting labels.
   # If it's empty when execute `daemon`, will use labels in `.runner` file.
   labels:
-    - "ubuntu-latest:docker://gitea/runner-images:ubuntu-latest-slim"
+    - "ubuntu-latest:docker://gitea/runner-images:ubuntu-latest"
     - "ubuntu-22.04:docker://gitea/runner-images:ubuntu-22.04"
     - "windows-latest:docker://dockurr/windows:latest"
     - "macos-latest:docker://sickcodes/docker-osx:latest"

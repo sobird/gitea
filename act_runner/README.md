@@ -4,6 +4,7 @@
 # 启动 act_runner
 
 docker run -d 
+  --restart always 
   --name act_runner 
   -e CONFIG_FILE=/data/config.yaml 
   -e GITEA_INSTANCE_URL=http://192.168.50.100:3000/ 
