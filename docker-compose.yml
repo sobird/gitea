@@ -32,6 +32,8 @@ services:
       - gitea_net
     volumes:
       - ./gitea_postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
   act_runner:
     image: gitea/act_runner:latest
